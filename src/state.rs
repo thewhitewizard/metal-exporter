@@ -25,3 +25,19 @@ impl MetalState {
         )
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_update_and_get_prices() {
+        let state = MetalState::new();
+        state.update_prices(1800.5, 23.75);
+
+        let (gold_price, silver_price) = state.get_prices();
+        assert_eq!(gold_price, 1800.5);
+        assert_eq!(silver_price, 23.75);
+    }
+}

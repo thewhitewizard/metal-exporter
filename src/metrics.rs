@@ -30,6 +30,7 @@ pub async fn start_http_server(state: Arc<MetalState>) {
 fn generate_metrics(state: Arc<MetalState>) -> String {
     let (gold_price_oz, silver_price_oz) = state.get_prices();
     let gold_gram_price = gold_price_oz / OZ_TO_GRAM;
+    let silver_gram_price = silver_price_oz / OZ_TO_GRAM;
 
     format!(
         "gold_oz_price {}\n\
@@ -40,6 +41,7 @@ fn generate_metrics(state: Arc<MetalState>) -> String {
          gold_gram_22k_price {}\n\
          gold_gram_21k_price {}\n\
          gold_gram_18k_price {}\n\
+         silver_gram_price {}\n\
          silver_oz_price {}\n",
         gold_price_oz,
         gold_price_oz * PURITY_22K,
@@ -49,6 +51,31 @@ fn generate_metrics(state: Arc<MetalState>) -> String {
         gold_gram_price * PURITY_22K,
         gold_gram_price * PURITY_21K,
         gold_gram_price * PURITY_18K,
+        silver_gram_price,
         silver_price_oz
     )
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::state::MetalState;
+    use std::sync::Arc;
+
+    #[test]
+    fn test_generate_metrics() {
+        let state = Arc::new(MetalState::new());
+        let gold_price_oz: f64 = 1800.5;
+        let silver_price_oz: f64 = 23.75; 
+
+        state.update_prices(gold_price_oz, silver_price_oz);
+
+        let metrics = generate_metrics(state.clone());
+ 
+        assert!(metrics.contains("gold_oz_price 1800.5"));
+        assert!(metrics.contains("silver_oz_price 23.75"));
+        assert!(metrics.contains("gold_gram_price 57.887376018776024"));
+        assert!(metrics.contains("silver_gram_price 0.7635796614528911"));
+    }    
 }

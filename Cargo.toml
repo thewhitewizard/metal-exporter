@@ -11,3 +11,6 @@ warp = "0.3.7"
 dotenv = "0.15.0"
 chrono = "0.4"
 openssl = { version = "0.10", features = ["vendored"] }
+
+[dev-dependencies]
+mockito = "0.31"
